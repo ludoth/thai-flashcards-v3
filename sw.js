@@ -1,15 +1,15 @@
-const CACHE = 'thai-flashcards-v2-app';
+const CACHE = 'thai-flashcards-v3-app';
 const ASSETS = [
-  '/thai-flashcards-v2/',
-  '/thai-flashcards-v2/index.html',
-  '/thai-flashcards-v2/words.js',
-  '/thai-flashcards-v2/sentences.js',
-  '/thai-flashcards-v2/a1.js',
-  '/thai-flashcards-v2/a2.js',
-  '/thai-flashcards-v2/manifest.json',
-  '/thai-flashcards-v2/icon-192.png',
-  '/thai-flashcards-v2/icon-512.png',
-  '/thai-flashcards-v2/how-to-use.html'
+  '/thai-flashcards-v3/',
+  '/thai-flashcards-v3/index.html',
+  '/thai-flashcards-v3/words.js',
+  '/thai-flashcards-v3/sentences.js',
+  '/thai-flashcards-v3/a1.js',
+  '/thai-flashcards-v3/a2.js',
+  '/thai-flashcards-v3/manifest.json',
+  '/thai-flashcards-v3/icon-192.png',
+  '/thai-flashcards-v3/icon-512.png',
+  '/thai-flashcards-v3/how-to-use.html'
 ];
 
 self.addEventListener('install', e => {

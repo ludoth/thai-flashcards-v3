@@ -2,7 +2,7 @@
   "name": "Thai Flashcards",
   "short_name": "Thai",
   "description": "Learn Thai vocabulary and sentences",
-  "start_url": "/thai-flashcards-v2/",
+  "start_url": "/thai-flashcards-v3/",
   "display": "standalone",
   "background_color": "#0f172a",
   "theme_color": "#0f172a",

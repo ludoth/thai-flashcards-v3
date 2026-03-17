@@ -8,6 +8,7 @@
   <meta name="theme-color" content="#0f172a" />
   <meta name="apple-mobile-web-app-capable" content="yes" />
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+  <script src="https://cdn.jsdelivr.net/npm/twemoji@14.0.2/dist/twemoji.min.js" crossorigin="anonymous"></script>
   <script src="words.js"></script>
   <script src="sentences.js"></script>
   <script src="a1.js"></script>
@@ -349,11 +350,12 @@
     .cat-name { font-size: 0.82rem; font-weight: 600; color: #e2e8f0; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
     .cat-total { font-size: 0.68rem; color: #475569; }
 
-    .cat-btn-right { display: flex; flex-direction: column; gap: 5px; flex-shrink: 0; align-items: center; }
-    .cat-pill { font-size: 0.68rem; font-weight: 700; line-height: 1; }
-    .cat-pill-green { color: #2d7a52; }
-    .cat-pill-divider { width: 12px; height: 1px; background: #2a3a4a; }
-    .cat-pill-red   { color: #7a3030; }
+    .cat-btn-right { display: flex; flex-direction: column; gap: 2px; flex-shrink: 0; align-items: flex-end; }
+    .cat-stars { display: flex; gap: 2px; }
+    .cat-star { font-size: 0.75rem; opacity: 0.18; }
+    .cat-star.lit { opacity: 1; }
+    .cat-pbar-wrap { width: 36px; height: 3px; background: #1e293b; border-radius: 99px; overflow: hidden; margin-top: 3px; }
+    .cat-pbar-fill { height: 100%; border-radius: 99px; background: #6366f1; transition: width 0.4s; }
     .cat-btn.selected .cat-total { color: #818cf8; }
 
     .picker-row {
@@ -417,53 +419,70 @@
       align-items: center;
     }
 
-    .card {
-      width: 100%;
-      max-width: 480px;
-      background: #1e293b;
-      border-radius: 20px;
-      padding: 48px 32px;
-      text-align: center;
-      min-height: 220px;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-      gap: 14px;
-      cursor: pointer;
-      border: 1px solid #334155;
-      transition: border-color 0.2s;
-      position: relative;
+    /* ── Flip card ── */
+    .card-scene {
+      width: 100%; max-width: 400px; height: 320px;
+      perspective: 1200px; cursor: pointer; user-select: none;
     }
-
-    .card:hover { border-color: #6366f1; }
-
+    .flip-card {
+      width: 100%; height: 100%; position: relative;
+      transform-style: preserve-3d;
+      transition: transform 0.42s cubic-bezier(0.4,0,0.2,1);
+    }
+    .flip-card.flipped { transform: rotateY(180deg); }
+    .flip-front, .flip-back {
+      position: absolute; width: 100%; height: 100%;
+      backface-visibility: hidden; -webkit-backface-visibility: hidden;
+      border-radius: 20px; display: flex; flex-direction: column;
+      align-items: center; justify-content: flex-start;
+      background: #fff; border: 7px solid var(--cat-color, #6366f1);
+      box-shadow: 0 6px 28px rgba(0,0,0,0.18);
+      overflow: hidden; padding: 0; gap: 0; text-align: center;
+    }
+    .flip-back { transform: rotateY(180deg); }
     .card-category {
-      font-size: 0.7rem;
-      text-transform: uppercase;
-      letter-spacing: 0.1em;
-      color: #475569;
-      position: absolute;
-      top: 18px;
-      left: 0; right: 0;
+      font-size: 0.62rem; text-transform: uppercase;
+      letter-spacing: 0.1em; color: #94a3b8; font-weight: 700;
+      padding: 7px 0 0; width: 100%; text-align: center;
+    }
+    .card-image-area {
+      flex: 1; display: flex; align-items: center; justify-content: center;
+      width: 100%; padding: 8px 16px;
+    }
+    .card-emoji { line-height: 1; font-size: 90px; }
+    .card-emoji img { width: 130px; height: 130px; object-fit: contain; }
+    .flip-back .card-emoji img { width: 80px; height: 80px; }
+    .flip-back .card-emoji { font-size: 60px; }
+    .card-word-area {
+      border-top: 1.5px solid #f1f5f9; width: 100%;
+      padding: 10px 16px 12px; display: flex;
+      flex-direction: column; align-items: center; gap: 3px;
+      background: #fff;
+    }
+    .card-front { font-size: 1.65rem; font-weight: 800; color: #1e293b; line-height: 1.1; }
+    .card-front.thai { color: #7c3aed; }
+    .card-hint { font-size: 0.72rem; color: #cbd5e1; margin-top: 2px; }
+    .thai-script { font-size: 1.9rem; font-weight: 800; color: #7c3aed; line-height: 1.1; }
+    .thai-roman { font-size: 0.82rem; color: #94a3b8; font-style: italic; }
+
+    /* ── Streak pill ── */
+    .streak-pill {
+      display: flex; align-items: center; gap: 5px;
+      background: #1c1108; border: 1.5px solid #78350f;
+      border-radius: 99px; padding: 4px 12px;
+      font-size: 0.8rem; font-weight: 800; color: #fb923c;
     }
 
-    .card-srs-badge {
-      position: absolute;
-      top: 14px;
-      right: 16px;
-      font-size: 0.65rem;
-      color: #334155;
+    /* ── Confetti ── */
+    .confetti-piece {
+      position: fixed; width: 8px; height: 8px; border-radius: 2px;
+      pointer-events: none; z-index: 999;
+      animation: confetti-fall 1.5s ease-in forwards;
     }
-
-    .card-front { font-size: 2rem; font-weight: 700; color: #f8fafc; }
-    .card-front.thai { color: #a78bfa; }
-    .card-hint { font-size: 0.82rem; color: #475569; }
-
-    .card-back { display: none; flex-direction: column; align-items: center; gap: 6px; }
-    .card-back.visible { display: flex; }
-
-    .thai-word { font-size: 2rem; font-weight: 700; color: #34d399; }
+    @keyframes confetti-fall {
+      0% { transform: translateY(-20px) rotate(0deg); opacity: 1; }
+      100% { transform: translateY(110vh) rotate(800deg); opacity: 0; }
+    }
 
     .btn-row {
       display: flex;
@@ -583,6 +602,8 @@
 
     .reset-link:hover { color: #334155; }
 
+    @keyframes done-pop { 0%{transform:scale(0)} 100%{transform:scale(1)} }
+
     .made-by {
       margin-top: 28px;
       font-size: 0.7rem;
@@ -594,7 +615,10 @@
 <body>
 
 <div class="top-bar">
-  <h1>🇹🇭 Thai Flashcards</h1>
+  <div style="display:flex;align-items:center;gap:10px">
+    <h1>🇹🇭 Thai Flashcards</h1>
+    <div class="streak-pill" id="streak-pill">🔥 0</div>
+  </div>
   <div class="lang-toggle">
     <button class="lang-btn active" id="lang-en" onclick="setLang('en')">EN</button>
     <button class="lang-btn" id="lang-th" onclick="setLang('th')">TH</button>
@@ -679,13 +703,28 @@
     </div>
   </div>
 
-  <div class="card" id="card" onclick="revealCard()">
-    <div class="card-category" id="card-category"></div>
-    <div class="card-srs-badge" id="card-srs-badge"></div>
-    <div class="card-front" id="card-front"></div>
-    <div class="card-hint" id="card-hint">tap to reveal</div>
-    <div class="card-back" id="card-back">
-      <div class="thai-word" id="thai-word"></div>
+  <div class="card-scene" id="card-scene" onclick="toggleFlip()">
+    <div class="flip-card" id="flip-card">
+      <div class="flip-front">
+        <div class="card-category" id="card-category"></div>
+        <div class="card-image-area">
+          <div class="card-emoji" id="card-emoji"></div>
+        </div>
+        <div class="card-word-area">
+          <div class="card-front" id="card-front"></div>
+          <div class="card-hint" id="card-hint">tap to flip</div>
+        </div>
+      </div>
+      <div class="flip-back">
+        <div class="card-category" id="card-category-back"></div>
+        <div class="card-image-area" style="flex:0.8">
+          <div class="card-emoji" id="card-emoji-back"></div>
+        </div>
+        <div class="card-word-area">
+          <div class="thai-script" id="thai-script"></div>
+          <div class="thai-roman" id="thai-roman"></div>
+        </div>
+      </div>
     </div>
   </div>
 
@@ -718,9 +757,25 @@
 </div>
 
 <div id="session-done">
-  <div style="font-size:2.5rem">🎉</div>
+  <div style="font-size:3.5rem;animation:done-pop 0.5s cubic-bezier(0.175,0.885,0.32,1.275)" id="done-burst">🎉</div>
   <h2 id="done-title">Session done!</h2>
   <p id="done-msg"></p>
+  <div style="display:flex;gap:20px;background:#1e293b;border-radius:16px;padding:16px 28px;margin:4px 0">
+    <div style="display:flex;flex-direction:column;align-items:center;gap:2px">
+      <span style="font-size:1.6rem;font-weight:800;color:#6366f1" id="done-correct">0</span>
+      <span style="font-size:0.65rem;color:#475569;font-weight:700;text-transform:uppercase;letter-spacing:.06em">Correct</span>
+    </div>
+    <div style="width:1px;background:#334155"></div>
+    <div style="display:flex;flex-direction:column;align-items:center;gap:2px">
+      <span style="font-size:1.6rem;font-weight:800;color:#6366f1" id="done-total">0</span>
+      <span style="font-size:0.65rem;color:#475569;font-weight:700;text-transform:uppercase;letter-spacing:.06em">Cards</span>
+    </div>
+    <div style="width:1px;background:#334155"></div>
+    <div style="display:flex;flex-direction:column;align-items:center;gap:2px">
+      <span style="font-size:1.6rem;font-weight:800;color:#34d399" id="done-mastered">0</span>
+      <span style="font-size:0.65rem;color:#475569;font-weight:700;text-transform:uppercase;letter-spacing:.06em">Mastered</span>
+    </div>
+  </div>
   <div class="btn-done-row">
     <button class="btn-secondary" onclick="showPicker()" data-key="changeCategories">Change categories</button>
     <button class="btn-primary" onclick="startSession()" data-key="studyAgain">Study again</button>
@@ -733,7 +788,7 @@
 
 <button class="stats-btn" onclick="showStats()" style="width:100%;max-width:520px;margin-bottom:12px;">📊 My Stats</button>
 
-<div class="made-by" id="made-by">✦ Made by Ludo · v2</div>
+<div class="made-by" id="made-by">✦ Made by Ludo · v3</div>
 
 <script>
 // ── Category emojis ──
@@ -763,6 +818,33 @@ const CAT_EMOJI = {
   emotions:   '😊',
   work:       '💼',
 };
+
+const CAT_COLORS = {
+  greetings:  '#ef4444', numbers:    '#3b82f6', colors:     '#8b5cf6',
+  food:       '#f59e0b', drinks:     '#06b6d4', family:     '#ec4899',
+  body:       '#14b8a6', clothing:   '#f97316', animals:    '#22c55e',
+  nature:     '#84cc16', weather:    '#60a5fa', places:     '#6366f1',
+  transport:  '#f97316', home:       '#a855f7', verbs:      '#10b981',
+  adjectives: '#f59e0b', time:       '#6366f1', days:       '#06b6d4',
+  months:     '#3b82f6', directions: '#8b5cf6', shopping:   '#ef4444',
+  health:     '#10b981', emotions:   '#f472b6', work:       '#64748b',
+};
+
+function setCardColor(cat) {
+  const color = CAT_COLORS[cat] || '#6366f1';
+  document.getElementById('flip-card').style.setProperty('--cat-color', color);
+}
+
+function applyTwemoji(el, size) {
+  el.innerHTML = el.textContent; // reset to text first
+  if (window.twemoji) {
+    twemoji.parse(el, {
+      folder: 'svg', ext: '.svg',
+      base: 'https://cdn.jsdelivr.net/npm/twemoji@14.0.2/assets/',
+      attributes: () => ({ style: `width:${size}px;height:${size}px;object-fit:contain` })
+    });
+  }
+}
 
 const CAT_NAMES = {
   en: {
@@ -839,7 +921,7 @@ const UI = {
     changeCategories: 'Change categories',
     studyAgain: 'Study again',
     resetProgress: 'reset all progress',
-    madeBy: '✦ Made by Ludo · v2',
+    madeBy: '✦ Made by Ludo · v3',
     howToUse: 'How to use',
     skip: 'Skip',
     stop: 'Stop',
@@ -869,7 +951,7 @@ const UI = {
     changeCategories: 'เปลี่ยนหมวด',
     studyAgain: 'เรียนอีกครั้ง',
     resetProgress: 'รีเซ็ตความคืบหน้า',
-    madeBy: '✦ สร้างโดย Ludo · v2',
+    madeBy: '✦ สร้างโดย Ludo · v3',
     howToUse: 'วิธีใช้',
     skip: 'ข้าม',
     stop: 'หยุด',
@@ -1039,7 +1121,8 @@ function renderPicker() {
     const displayName = catName(cat);
     const btn = document.createElement('button');
     btn.className = 'cat-btn' + (selectedCats.has(cat) ? ' selected' : '');
-    const notDone = total - done;
+    const pct = total > 0 ? Math.round(done/total*100) : 0;
+    const stars = Math.min(3, Math.floor(pct/34));
     btn.innerHTML = `
       <div class="cat-btn-left">
         <div class="cat-emoji">${isChapter ? '📖' : emoji}</div>
@@ -1047,9 +1130,8 @@ function renderPicker() {
         <div class="cat-total">${total} ${total === 1 ? 'word' : 'words'}</div>
       </div>
       <div class="cat-btn-right">
-        <div class="cat-pill cat-pill-green">${done}</div>
-        <div class="cat-pill-divider"></div>
-        <div class="cat-pill cat-pill-red">${notDone}</div>
+        <div class="cat-stars">${[0,1,2].map(s=>`<span class="cat-star${s<stars?' lit':''}">⭐</span>`).join('')}</div>
+        <div class="cat-pbar-wrap"><div class="cat-pbar-fill" style="width:${pct}%"></div></div>
       </div>
     `;
     btn.onclick = () => toggleCat(cat, btn);
@@ -1178,24 +1260,36 @@ function nextCard() {
 
   const box = getBox(idx);
   const item = items[idx];
-  const frontEl   = document.getElementById('card-front');
-  const thaiWordEl = document.getElementById('thai-word');
 
-  if (direction === 'eng-thai') {
-    frontEl.textContent = item.en;
-    frontEl.classList.remove('thai');
-    thaiWordEl.textContent = item.th;
-  } else {
-    frontEl.textContent = item.th;
-    frontEl.classList.add('thai');
-    thaiWordEl.textContent = item.en;
-  }
+  // Reset flip
+  document.getElementById('flip-card').classList.remove('flipped');
 
-  document.getElementById('card-category').textContent = (CAT_EMOJI[item.cat] || '') + ' ' + catName(item.cat);
-  document.getElementById('card-srs-badge').textContent = '◆'.repeat(box);
+  // Front side
+  const frontText = direction === 'eng-thai' ? item.en : item.th;
+  const frontEl = document.getElementById('card-front');
+  frontEl.textContent = frontText;
+  frontEl.classList.toggle('thai', direction !== 'eng-thai');
+  const catLabel = catName(item.cat);
+  document.getElementById('card-category').textContent = catLabel;
   document.getElementById('card-hint').textContent = t('tapToReveal');
   document.getElementById('card-hint').style.display = '';
-  document.getElementById('card-back').classList.remove('visible');
+
+  // Back side
+  document.getElementById('thai-script').textContent = direction === 'eng-thai' ? (item.script || item.th) : item.en;
+  document.getElementById('thai-roman').textContent = direction === 'eng-thai' ? item.th : '';
+  document.getElementById('card-category-back').textContent = catLabel;
+
+  // Emoji + category color
+  const emojiChar = item.emoji || '❓';
+  document.getElementById('card-emoji').textContent = emojiChar;
+  document.getElementById('card-emoji-back').textContent = emojiChar;
+  setCardColor(item.cat);
+  requestAnimationFrame(() => {
+    applyTwemoji(document.getElementById('card-emoji'), 130);
+    applyTwemoji(document.getElementById('card-emoji-back'), 80);
+  });
+
+  document.getElementById('card-srs-badge').textContent = '◆'.repeat(box);
   document.getElementById('btn-row').style.display = 'none';
   document.getElementById('btn-reveal-row').style.display = 'flex';
 
@@ -1279,14 +1373,20 @@ function skipCard() {
   nextCard();
 }
 
-function revealCard() {
-  if (revealed) return;
-  revealed = true;
-  document.getElementById('card-back').classList.add('visible');
-  document.getElementById('card-hint').style.display = 'none';
-  document.getElementById('btn-reveal-row').style.display = 'none';
-  document.getElementById('btn-row').style.display = 'flex';
+function toggleFlip() {
+  const flipCard = document.getElementById('flip-card');
+  if (!revealed) {
+    revealed = true;
+    flipCard.classList.add('flipped');
+    document.getElementById('card-hint').style.display = 'none';
+    document.getElementById('btn-reveal-row').style.display = 'none';
+    document.getElementById('btn-row').style.display = 'flex';
+  } else {
+    flipCard.classList.toggle('flipped');
+  }
 }
+
+function revealCard() { toggleFlip(); }
 
 function answer(correct) {
   sessionTotal++;
@@ -1320,6 +1420,11 @@ function showDone() {
   const { items } = activeData();
   document.getElementById('done-msg').textContent =
     `${sessionCorrect} / ${sessionTotal} correct · ${count} / ${items.length} at box 3+`;
+  document.getElementById('done-correct').textContent = sessionCorrect;
+  document.getElementById('done-total').textContent = sessionTotal;
+  document.getElementById('done-mastered').textContent = count;
+  updateStreak();
+  fireConfetti();
 }
 
 function resetProgress() {
@@ -1440,10 +1545,10 @@ function speakThai() {
   const item = current.item;
   let text, speechLang;
   if (!revealed) {
-    text = direction === 'eng-thai' ? item.en : item.th;
+    text = direction === 'eng-thai' ? item.en : (item.script || item.th);
     speechLang = direction === 'eng-thai' ? 'en-US' : 'th-TH';
   } else {
-    text = direction === 'eng-thai' ? item.th : item.en;
+    text = direction === 'eng-thai' ? (item.script || item.th) : item.en;
     speechLang = direction === 'eng-thai' ? 'th-TH' : 'en-US';
   }
   const utt = new SpeechSynthesisUtterance(text);
@@ -1461,7 +1566,76 @@ function updateSpeakBtn() {
 window.addEventListener('online', updateSpeakBtn);
 window.addEventListener('offline', updateSpeakBtn);
 
+// ── Streak ──
+let streak = 0;
+
+function loadStreak() {
+  const today = new Date().toDateString();
+  const last = localStorage.getItem('thai_last_date');
+  streak = parseInt(localStorage.getItem('thai_streak') || '0', 10);
+  if (last === today) {
+    // already counted today
+  } else if (last === new Date(Date.now() - 86400000).toDateString()) {
+    // yesterday — streak continues, will increment on session done
+  } else {
+    streak = 0;
+  }
+  document.getElementById('streak-pill').textContent = '🔥 ' + streak;
+}
+
+function updateStreak() {
+  const today = new Date().toDateString();
+  const last = localStorage.getItem('thai_last_date');
+  if (last !== today) {
+    streak++;
+    localStorage.setItem('thai_streak', streak);
+    localStorage.setItem('thai_last_date', today);
+  }
+  document.getElementById('streak-pill').textContent = '🔥 ' + streak;
+}
+
+// ── Confetti ──
+function fireConfetti() {
+  const colors = ['#6366f1','#34d399','#f59e0b','#f472b6','#60a5fa','#fb923c'];
+  for (let i = 0; i < 48; i++) {
+    const el = document.createElement('div');
+    el.className = 'confetti-piece';
+    el.style.cssText = `
+      left:${Math.random()*100}vw;
+      top:-10px;
+      background:${colors[Math.floor(Math.random()*colors.length)]};
+      width:${6+Math.random()*6}px;
+      height:${10+Math.random()*8}px;
+      border-radius:${Math.random()>0.5?'50%':'3px'};
+      opacity:${0.7+Math.random()*0.3};
+      animation-delay:${Math.random()*0.6}s;
+      animation-duration:${1.2+Math.random()*0.8}s;
+      transform:rotate(${Math.random()*360}deg);
+    `;
+    document.body.appendChild(el);
+    el.addEventListener('animationend', () => el.remove());
+  }
+}
+
+// ── Swipe gestures ──
+(function() {
+  let startX = 0, startY = 0;
+  const scene = document.getElementById('card-scene');
+  scene.addEventListener('touchstart', e => {
+    startX = e.touches[0].clientX;
+    startY = e.touches[0].clientY;
+  }, { passive: true });
+  scene.addEventListener('touchend', e => {
+    if (!revealed) return;
+    const dx = e.changedTouches[0].clientX - startX;
+    const dy = e.changedTouches[0].clientY - startY;
+    if (Math.abs(dx) < 55 || Math.abs(dy) > Math.abs(dx)) return;
+    if (dx > 0) answer(true); else answer(false);
+  }, { passive: true });
+})();
+
 // ── Init ──
+loadStreak();
 applyLang();
 setLang(lang);
 applyDirectionUI();
@@ -1469,7 +1643,7 @@ showPicker();
 updateSpeakBtn();
 
 if ('serviceWorker' in navigator) {
-  navigator.serviceWorker.register('/thai-flashcards-v2/sw.js');
+  navigator.serviceWorker.register('/thai-flashcards-v3/sw.js');
 }
 </script>
 </body>
